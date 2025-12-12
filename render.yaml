@@ -5,9 +5,8 @@ services:
     plan: free
     autoDeploy: true
     branch: main
-    rootDir: server
-    buildCommand: "npm install"
-    startCommand: "node src/index.js"
+    buildCommand: "cd server && npm install"
+    startCommand: "cd server && node src/index.js"
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV

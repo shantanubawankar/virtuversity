@@ -50,6 +50,7 @@ app.use('/api/teachers', teachersRouter)
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../../client/index.html')))
 app.get('/health', (req, res) => res.json({ ok: true }))
+app.get('/api/health', (req, res) => res.json({ ok: true }))
 
 const port = process.env.PORT || 8080
 app.listen(port, () => {})

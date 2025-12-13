@@ -27,4 +27,16 @@ router.post('/:id/pricing', (req, res) => {
   res.json({ pricing: db.users[idx].pricing })
 })
 
+router.post('/:id/profile', (req, res) => {
+  const { id } = req.params
+  const { name, bio, upi, bank } = req.body
+  const user = getUserById(id)
+  if (!user || user.role !== 'teacher') return res.status(404).json({ error: 'Teacher not found' })
+  const db = read()
+  const idx = db.users.findIndex(u => u.id === id)
+  db.users[idx].profile = { name, bio, payout: { upi, bank } }
+  write(db)
+  res.json({ profile: db.users[idx].profile })
+})
+
 export default router

@@ -57,4 +57,27 @@ router.post('/:id/profile', (req, res) => {
   res.json({ profile: db.users[idx].profile })
 })
 
+router.get('/:id/videos', (req, res) => {
+  const { id } = req.params
+  const user = getUserById(id)
+  if (!user || user.role !== 'teacher') return res.status(404).json({ error: 'Teacher not found' })
+  const db = read()
+  const list = (db.videos || []).filter(v => v.teacherId === id)
+  res.json({ videos: list })
+})
+
+router.post('/:id/videos', (req, res) => {
+  const { id } = req.params
+  const { title, url, courseId, price = 0 } = req.body
+  const user = getUserById(id)
+  if (!user || user.role !== 'teacher') return res.status(404).json({ error: 'Teacher not found' })
+  if (!title || !url || !courseId) return res.status(400).json({ error: 'Missing fields' })
+  const db = read()
+  const vid = { id: 'video_' + Date.now(), title, url, courseId, price, teacherId: id }
+  db.videos = db.videos || []
+  db.videos.push(vid)
+  write(db)
+  res.json({ video: vid })
+})
+
 export default router

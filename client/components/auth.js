@@ -30,7 +30,8 @@ export function Auth() {
     }
   }
   const oauth = async (provider) => {
-    showToast(provider + ' sign in not configured yet', 'error')
+    const p = provider.toLowerCase()
+    location.href = `/api/auth/oauth/${p}/start?role=${role}`
   }
   return React.createElement(Card, { className: 'max-w-md mx-auto' },
     React.createElement('div', { className: 'flex gap-2 mb-4' },

@@ -16,6 +16,10 @@ export function Account() {
   const [newModel, setNewModel] = useState('video')
   const [newPrice, setNewPrice] = useState('')
   const [myCourses, setMyCourses] = useState([])
+  const [vidTitle, setVidTitle] = useState('')
+  const [vidUrl, setVidUrl] = useState('')
+  const [vidCourseId, setVidCourseId] = useState('')
+  const [vidPrice, setVidPrice] = useState('')
   useEffect(() => { (async () => {
     try {
       const res = await fetch('/api/auth/me', { credentials: 'include' })
@@ -51,6 +55,17 @@ export function Account() {
       showToast('Course created', 'success')
       setMyCourses([data.course, ...myCourses])
       setNewTitle(''); setNewDesc(''); setNewModel('video'); setNewPrice('')
+    } else {
+      showToast(data.error || 'Error', 'error')
+    }
+  }
+  const createVideo = async () => {
+    if (!vidTitle || !vidUrl || !vidCourseId || !vidPrice || isNaN(Number(vidPrice))) { showToast('Fill all fields with valid data', 'error'); return }
+    const res = await fetch(`/api/teachers/${me.id}/videos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ title: vidTitle, url: vidUrl, courseId: vidCourseId, price: Number(vidPrice) }) })
+    const data = await res.json()
+    if (res.ok) {
+      showToast('Video added', 'success')
+      setVidTitle(''); setVidUrl(''); setVidCourseId(''); setVidPrice('')
     } else {
       showToast(data.error || 'Error', 'error')
     }
@@ -99,6 +114,18 @@ export function Account() {
             React.createElement('textarea', { className: 'glass rounded-lg px-4 py-2 md:col-span-2', placeholder: 'Description', value: newDesc, onChange: e => setNewDesc(e.target.value) }),
             React.createElement('input', { className: 'glass rounded-lg px-4 py-2', placeholder: 'Price (₹)', value: newPrice, onChange: e => setNewPrice(e.target.value), inputMode: 'numeric' }),
             React.createElement(Button, { variant: 'accent', onClick: createCourse }, 'Create Course')
+          )
+        ),
+        React.createElement(Card, null,
+          React.createElement('div', { className: 'grid md:grid-cols-2 gap-3' },
+            React.createElement('input', { className: 'glass rounded-lg px-4 py-2', placeholder: 'Video title', value: vidTitle, onChange: e => setVidTitle(e.target.value) }),
+            React.createElement('select', { className: 'glass rounded-lg px-4 py-2', value: vidCourseId, onChange: e => setVidCourseId(e.target.value) },
+              React.createElement('option', { value: '' }, 'Select course'),
+              myCourses.map(c => React.createElement('option', { key: c.id, value: c.id }, c.title))
+            ),
+            React.createElement('input', { className: 'glass rounded-lg px-4 py-2 md:col-span-2', placeholder: 'Video URL (mp4)', value: vidUrl, onChange: e => setVidUrl(e.target.value) }),
+            React.createElement('input', { className: 'glass rounded-lg px-4 py-2', placeholder: 'Price (₹)', value: vidPrice, onChange: e => setVidPrice(e.target.value), inputMode: 'numeric' }),
+            React.createElement(Button, { variant: 'accent', onClick: createVideo }, 'Add Video')
           )
         ),
         React.createElement('div', { className: 'grid md:grid-cols-3 gap-3' },

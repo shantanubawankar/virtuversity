@@ -1,0 +1,19 @@
+{
+  "builds": [
+    { "src": "client/**/*", "use": "@vercel/static" }
+  ],
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://virtuversity.onrender.com/api/$1" }
+  ],
+  "routes": [
+    { "src": "/", "dest": "client/index.html" },
+    { "src": "/login", "dest": "client/login.html" },
+    { "src": "/profile", "dest": "client/profile.html" },
+    { "src": "/video", "dest": "client/video.html" },
+    { "src": "/payments", "dest": "client/payments.html" },
+    { "src": "/courses", "dest": "client/courses.html" },
+    { "src": "/courses/[^/]+", "dest": "client/course.html" },
+    { "src": "/teachers", "dest": "client/teachers.html" },
+    { "src": "/my-courses", "dest": "client/my-courses.html" }
+  ]
+}

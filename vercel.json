@@ -1,19 +1,20 @@
 {
+  "version": 2,
+  "cleanUrls": true,
+  "trailingSlash": false,
   "builds": [
-    { "src": "client/**/*", "use": "@vercel/static" }
+    { "src": "client/**", "use": "@vercel/static" }
   ],
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://virtuversity.onrender.com/api/$1" }
-  ],
-  "routes": [
-    { "src": "/", "dest": "client/index.html" },
-    { "src": "/login", "dest": "client/login.html" },
-    { "src": "/profile", "dest": "client/profile.html" },
-    { "src": "/video", "dest": "client/video.html" },
-    { "src": "/payments", "dest": "client/payments.html" },
-    { "src": "/courses", "dest": "client/courses.html" },
-    { "src": "/courses/[^/]+", "dest": "client/course.html" },
-    { "src": "/teachers", "dest": "client/teachers.html" },
-    { "src": "/my-courses", "dest": "client/my-courses.html" }
+    { "source": "/api/:path*", "destination": "https://virtuversity.onrender.com/api/:path*" },
+    { "source": "/", "destination": "/client/index.html" },
+    { "source": "/login", "destination": "/client/login.html" },
+    { "source": "/profile", "destination": "/client/profile.html" },
+    { "source": "/video", "destination": "/client/video.html" },
+    { "source": "/payments", "destination": "/client/payments.html" },
+    { "source": "/courses", "destination": "/client/courses.html" },
+    { "source": "/courses/:id", "destination": "/client/course.html" },
+    { "source": "/teachers", "destination": "/client/teachers.html" },
+    { "source": "/my-courses", "destination": "/client/my-courses.html" }
   ]
 }

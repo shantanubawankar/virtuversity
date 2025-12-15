@@ -1,18 +1,19 @@
-async function api(path, { method = 'GET', body } = {}) {
+async function api(path, { method = 'GET', body, headers } = {}) {
   const opts = {
     method,
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
+    headers: Object.assign({}, body ? { 'Content-Type': 'application/json' } : {}, headers || (localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {})),
     credentials: 'include',
     body: body ? JSON.stringify(body) : undefined
   }
   let res = await fetch(path, opts);
   let ct = res.headers.get('content-type') || '';
-  if (!res.ok && ct.includes('text/html')) {
-    const txt = await res.text().catch(() => '');
-    if (txt.includes('NOT_FOUND')) {
+  if (!res.ok) {
+    let txt = ''
+    try { txt = await res.text() } catch {}
+    if (res.status === 404 || (txt && (txt.includes('NOT_FOUND') || txt.includes('The page could not be found')))) {
       res = await fetch(`https://virtuversity.onrender.com${path}`, opts);
       ct = res.headers.get('content-type') || '';
-    } else {
+    } else if (txt) {
       throw new Error(txt || 'Request failed');
     }
   }
@@ -84,7 +85,7 @@ function showProfile() {
   const box = document.getElementById('profileBox');
   (async () => {
     try {
-      const r = await api('/api/auth/me');
+      const r = await api('/api/auth/me', { headers: localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : undefined });
       box.textContent = `Email: ${r.user.email} • Role: ${r.user.role}`;
     } catch {
       box.textContent = 'Not logged in';

@@ -2,7 +2,8 @@ import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { v4 as uuidv4 } from 'uuid'
 import { addUser, getUserByEmail, getUserById } from '../data/store.js'
-import { signToken, verifyToken } from '../middleware/auth.js'
+import { signToken, verifyToken, requireAuth } from '../middleware/auth.js'
+import { updateUser } from '../data/store.js'
 
 const router = Router()
 
@@ -49,6 +50,19 @@ router.get('/me', (req, res) => {
   } catch {
     res.status(401).json({ error: 'Unauthorized' })
   }
+})
+
+router.put('/me', requireAuth, (req, res) => {
+  const allowed = ['name', 'phone', 'education', 'interests', 'bio', 'expertise', 'availability', 'pricing', 'location', 'timezone', 'portfolioUrl', 'social']
+  const patch = {}
+  for (const k of allowed) {
+    if (req.body && Object.prototype.hasOwnProperty.call(req.body, k)) {
+      patch[k] = req.body[k]
+    }
+  }
+  const updated = updateUser(req.user.id, patch)
+  if (!updated) return res.status(404).json({ error: 'Not found' })
+  res.json({ user: { id: updated.id, email: updated.email, role: updated.role, name: updated.name, phone: updated.phone, education: updated.education, interests: updated.interests, bio: updated.bio, expertise: updated.expertise, availability: updated.availability, pricing: updated.pricing, location: updated.location, timezone: updated.timezone, portfolioUrl: updated.portfolioUrl, social: updated.social } })
 })
 
 export default router

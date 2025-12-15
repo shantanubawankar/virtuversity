@@ -32,6 +32,15 @@ export function getUserById(id) {
   return db.users.find(u => u.id === id)
 }
 
+export function updateUser(id, patch) {
+  const db = read()
+  const idx = (db.users || []).findIndex(u => u.id === id)
+  if (idx === -1) return null
+  db.users[idx] = { ...db.users[idx], ...patch }
+  write(db)
+  return db.users[idx]
+}
+
 export function seedSampleVideo() {
   const db = read()
   const exists = db.videos.find(v => v.id === 'sample')

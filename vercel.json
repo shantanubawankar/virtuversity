@@ -15,6 +15,7 @@
     { "source": "/courses", "destination": "/client/courses.html" },
     { "source": "/courses/:id", "destination": "/client/course.html" },
     { "source": "/teachers", "destination": "/client/teachers.html" },
-    { "source": "/my-courses", "destination": "/client/my-courses.html" }
+    { "source": "/my-courses", "destination": "/client/my-courses.html" },
+    { "source": "/dashboard", "destination": "/client/teacher-dashboard.html" }
   ]
 }

@@ -41,12 +41,22 @@
     </main>
     <script>
       async function api(path, { method = 'GET', body, headers } = {}) {
-        const res = await fetch(path, {
-          method,
-          headers: Object.assign({}, body ? { 'Content-Type': 'application/json' } : {}, headers || (localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {})),
-          credentials: 'include',
-          body: body ? JSON.stringify(body) : undefined
-        });
+        let res
+        try {
+          res = await fetch(path, {
+            method,
+            headers: Object.assign({}, body ? { 'Content-Type': 'application/json' } : {}, headers || (localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {})),
+            credentials: 'include',
+            body: body ? JSON.stringify(body) : undefined
+          });
+        } catch (e) {
+          res = await fetch(`https://virtuversity.onrender.com${path}`, {
+            method,
+            headers: Object.assign({}, body ? { 'Content-Type': 'application/json' } : {}, headers || (localStorage.getItem('token') ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {})),
+            credentials: 'include',
+            body: body ? JSON.stringify(body) : undefined
+          }).catch(() => { throw new Error('Network error') })
+        }
         const ct = res.headers.get('content-type') || '';
         if (!res.ok) {
           let errText = 'Request failed';

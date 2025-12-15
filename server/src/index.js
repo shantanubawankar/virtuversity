@@ -20,7 +20,21 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:8080'
-app.use(cors({ origin: clientOrigin, credentials: true }))
+function originCheck(origin, cb) {
+  if (!origin) return cb(null, true)
+  try {
+    const u = new URL(origin)
+    const host = u.hostname
+    const allow =
+      origin === clientOrigin ||
+      host.endsWith('.vercel.app') ||
+      host === 'localhost'
+    cb(null, allow)
+  } catch {
+    cb(null, false)
+  }
+}
+app.use(cors({ origin: originCheck, credentials: true }))
 app.set('trust proxy', 1)
 app.use((req, res, next) => {
   const host = req.headers.host || ''

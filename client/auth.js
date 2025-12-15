@@ -5,7 +5,12 @@ async function api(path, { method = 'GET', body, headers } = {}) {
     credentials: 'include',
     body: body ? JSON.stringify(body) : undefined
   }
-  let res = await fetch(path, opts);
+  let res
+  try {
+    res = await fetch(path, opts);
+  } catch (e) {
+    res = await fetch(`https://virtuversity.onrender.com${path}`, opts).catch(() => { throw new Error('Network error') })
+  }
   let ct = res.headers.get('content-type') || '';
   if (!res.ok) {
     let txt = ''

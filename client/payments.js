@@ -1,11 +1,21 @@
 async function api(path, { method = 'GET', body } = {}) {
-  const res = await fetch(path, {
+  const opts = {
     method,
     headers: body ? { 'Content-Type': 'application/json' } : undefined,
     credentials: 'include',
     body: body ? JSON.stringify(body) : undefined
-  });
-  const ct = res.headers.get('content-type') || '';
+  }
+  let res = await fetch(path, opts);
+  let ct = res.headers.get('content-type') || '';
+  if (!res.ok && ct.includes('text/html')) {
+    const txt = await res.text().catch(() => '');
+    if (txt.includes('NOT_FOUND')) {
+      res = await fetch(`https://virtuversity.onrender.com${path}`, opts);
+      ct = res.headers.get('content-type') || '';
+    } else {
+      throw new Error(txt || 'Request failed');
+    }
+  }
   if (!res.ok) {
     let errText = 'Request failed';
     try {

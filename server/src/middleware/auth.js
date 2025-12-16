@@ -11,8 +11,7 @@ export function verifyToken(token) {
 }
 
 export function requireAuth(req, res, next) {
-  const bearer = (req.headers['authorization'] || '').split(' ')[1]
-  const token = req.cookies['token'] || bearer
+  const token = req.cookies['token']
   if (!token) return res.status(401).json({ error: 'Unauthorized' })
   try {
     const payload = verifyToken(token)

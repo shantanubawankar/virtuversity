@@ -13,12 +13,7 @@ seedSampleVideo()
 router.get('/stream/:id', (req, res) => {
   const id = req.params.id
   const file = path.join(__dirname, `../../videos/${id}.mp4`)
-  if (!fs.existsSync(file)) {
-    if (id === 'sample') {
-      return res.redirect(302, 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')
-    }
-    return res.status(404).end()
-  }
+  if (!fs.existsSync(file)) return res.status(404).end()
   const stat = fs.statSync(file)
   const range = req.headers.range
   if (!range) {

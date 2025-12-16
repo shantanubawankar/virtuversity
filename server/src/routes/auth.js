@@ -2,8 +2,7 @@ import { Router } from 'express'
 import bcrypt from 'bcryptjs'
 import { v4 as uuidv4 } from 'uuid'
 import { addUser, getUserByEmail, getUserById } from '../data/store.js'
-import { signToken, verifyToken, requireAuth } from '../middleware/auth.js'
-import { updateUser } from '../data/store.js'
+import { signToken } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -18,7 +17,7 @@ router.post('/register', async (req, res) => {
   const token = signToken({ id: user.id, role: user.role })
   const isProd = process.env.NODE_ENV === 'production'
   res.cookie('token', token, { httpOnly: true, sameSite: isProd ? 'none' : 'lax', secure: isProd, path: '/' })
-  res.json({ message: 'Registered', user: { id: user.id, email, role: user.role }, token })
+  res.json({ message: 'Registered', user: { id: user.id, email, role: user.role } })
 })
 
 router.post('/login', async (req, res) => {
@@ -30,7 +29,7 @@ router.post('/login', async (req, res) => {
   const token = signToken({ id: user.id, role: user.role })
   const isProd = process.env.NODE_ENV === 'production'
   res.cookie('token', token, { httpOnly: true, sameSite: isProd ? 'none' : 'lax', secure: isProd, path: '/' })
-  res.json({ message: 'Logged in', user: { id: user.id, email: user.email, role: user.role }, token })
+  res.json({ message: 'Logged in', user: { id: user.id, email: user.email, role: user.role } })
 })
 
 router.post('/logout', (req, res) => {
@@ -39,30 +38,16 @@ router.post('/logout', (req, res) => {
 })
 
 router.get('/me', (req, res) => {
+  const token = req.cookies['token']
+  if (!token) return res.status(401).json({ error: 'Unauthorized' })
   try {
-    const bearer = (req.headers['authorization'] || '').split(' ')[1]
-    const token = req.cookies['token'] || bearer
-    if (!token) return res.status(401).json({ error: 'Unauthorized' })
-    const payload = verifyToken(token)
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
     const user = getUserById(payload.id)
     if (!user) return res.status(404).json({ error: 'Not found' })
     res.json({ user: { id: user.id, email: user.email, role: user.role } })
   } catch {
     res.status(401).json({ error: 'Unauthorized' })
   }
-})
-
-router.put('/me', requireAuth, (req, res) => {
-  const allowed = ['name', 'phone', 'education', 'interests', 'bio', 'expertise', 'availability', 'pricing', 'location', 'timezone', 'portfolioUrl', 'social']
-  const patch = {}
-  for (const k of allowed) {
-    if (req.body && Object.prototype.hasOwnProperty.call(req.body, k)) {
-      patch[k] = req.body[k]
-    }
-  }
-  const updated = updateUser(req.user.id, patch)
-  if (!updated) return res.status(404).json({ error: 'Not found' })
-  res.json({ user: { id: updated.id, email: updated.email, role: updated.role, name: updated.name, phone: updated.phone, education: updated.education, interests: updated.interests, bio: updated.bio, expertise: updated.expertise, availability: updated.availability, pricing: updated.pricing, location: updated.location, timezone: updated.timezone, portfolioUrl: updated.portfolioUrl, social: updated.social } })
 })
 
 export default router

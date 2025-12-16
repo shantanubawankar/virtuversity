@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getUserById, getTeachers } from '../data/store.js'
+import { getUserById } from '../data/store.js'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -25,11 +25,6 @@ router.post('/:id/pricing', (req, res) => {
   db.users[idx].pricing = { model, price }
   write(db)
   res.json({ pricing: db.users[idx].pricing })
-})
-
-router.get('/', (req, res) => {
-  const teachers = getTeachers()
-  res.json({ teachers })
 })
 
 export default router

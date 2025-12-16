@@ -1,5 +1,9 @@
 {
+  "version": 2,
+  "builds": [
+    { "src": "client/**", "use": "@vercel/static" }
+  ],
   "rewrites": [
-    { "source": "/((?!.*\\..*).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/client/index.html" }
   ]
 }

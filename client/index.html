@@ -42,13 +42,13 @@
       <div class="text-xl font-semibold">Virtuversity</div>
       <nav class="flex items-center gap-2 text-sm">
         <a href="/" class="px-3 py-2 rounded bg-white/10">Home</a>
-        <a href="/courses" class="px-3 py-2 rounded hover:bg-white/10">Courses</a>
-        <a href="/teachers" class="px-3 py-2 rounded hover:bg-white/10">Teachers</a>
-        <a href="/my-courses" class="px-3 py-2 rounded hover:bg-white/10">My Courses</a>
-        <a href="/video" class="px-3 py-2 rounded hover:bg-white/10">Video</a>
-        <a href="/payments" class="px-3 py-2 rounded hover:bg-white/10">Payments</a>
-        <a href="/login" class="px-3 py-2 rounded hover:bg-white/10">Login</a>
-        <a href="/profile" class="px-3 py-2 rounded hover:bg-white/10">Profile</a>
+        <a href="#/courses" class="px-3 py-2 rounded hover:bg-white/10">Courses</a>
+        <a href="#/teachers" class="px-3 py-2 rounded hover:bg-white/10">Teachers</a>
+        <a href="#/my-courses" class="px-3 py-2 rounded hover:bg-white/10">My Courses</a>
+        <a href="#/video" class="px-3 py-2 rounded hover:bg-white/10">Video</a>
+        <a href="#/payments" class="px-3 py-2 rounded hover:bg-white/10">Payments</a>
+        <a href="#/login" class="px-3 py-2 rounded hover:bg-white/10">Login</a>
+        <a href="#/profile" class="px-3 py-2 rounded hover:bg-white/10">Profile</a>
       </nav>
     </header>
     <main class="max-w-6xl mx-auto px-6 py-12">
@@ -117,8 +117,8 @@
             <div class="text-white/80">Pick a course or follow a teacher — your journey, your pace.</div>
           </div>
           <div class="flex gap-3">
-            <a href="/courses" class="px-5 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500">Browse courses</a>
-            <a href="/login" class="px-5 py-3 rounded-lg bg-white/10 hover:bg-white/20">Create account</a>
+            <a href="#/courses" class="px-5 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500">Browse courses</a>
+            <a href="#/login" class="px-5 py-3 rounded-lg bg-white/10 hover:bg-white/20">Create account</a>
           </div>
         </div>
       </section>
@@ -129,10 +129,10 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>© Virtuversity</div>
         <div class="flex gap-4">
-          <a href="/courses" class="hover:text-white">Courses</a>
-          <a href="/teachers" class="hover:text-white">Teachers</a>
-          <a href="/payments" class="hover:text-white">Pricing</a>
-          <a href="/profile" class="hover:text-white">Account</a>
+          <a href="#/courses" class="hover:text-white">Courses</a>
+          <a href="#/teachers" class="hover:text-white">Teachers</a>
+          <a href="#/payments" class="hover:text-white">Pricing</a>
+          <a href="#/profile" class="hover:text-white">Account</a>
         </div>
       </div>
     </footer>
@@ -151,7 +151,7 @@
         container.innerHTML = html
       }
       async function route() {
-        const path = window.location.pathname
+        const path = (window.location.hash || '').replace(/^#/, '') || '/'
         const home = document.getElementById('home-view')
         const page = document.getElementById('page-view')
         if (path === '/') {
@@ -204,6 +204,7 @@
           </section>
         `)
       }
+      window.addEventListener('hashchange', route)
       route()
     </script>
   </body>
